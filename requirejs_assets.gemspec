@@ -20,10 +20,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rails', '~> 3.2.2'
   gem.add_development_dependency 'rspec-rails'
 
-  gem.add_development_dependency 'sass-rails'
-  gem.add_development_dependency 'coffee-rails'
-  gem.add_development_dependency 'uglifier'
-
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
