@@ -11,7 +11,7 @@ module RequirejsAssets
     def evaluate context, locals, &block
       @context = context
       process_directives
-      ast.to_ecma + "\n\n"
+      finalize_javascript
     end
 
     def directives
@@ -66,17 +66,40 @@ module RequirejsAssets
     def relative?(path)
       path =~ /^\.($|\.?\/)/
     end
-
-    def ast
-      @ast ||= js_parser.parse(data)
-    end
     
     def js_parser
       @js_parser ||= RKelly::Parser.new
     end
 
+    def ast
+      @ast ||= js_parser.parse(data)
+    end
+
     def safety_wrapper_ast
       @js_wrapper_ast ||= js_parser.parse('(function(){}).call(this);')
+    end
+
+    def define_module_ast
+      @define_module_ast ||= js_parser.parse(
+        "define('#{name_of_processed_module}', #{shim_options[:deps].inspect}, #{shim_options[:exports]});"
+      )
+    end
+
+    def finalize_javascript
+      if shim?
+        finalize_shim_javascript
+      else
+        finalize_amd_javascript
+      end
+    end
+
+    def finalize_shim_javascript
+      ast.value << define_module_ast.value[0].value
+      safety_javascript(ast, true) + "\n\n"
+    end
+
+    def finalize_amd_javascript
+      ast.to_ecma + "\n\n"
     end
 
     def safety_javascript source, return_string=nil
@@ -133,6 +156,21 @@ module RequirejsAssets
 
     def required_dependencies
       @required_dependencies ||= Set.new
+    end
+
+    def shim?
+      shim_options.present?
+    end
+
+    def shim_options
+      @shim_options ||= begin
+        Rails.application.config.requirejs.shim.try(:[], name_of_processed_module).tap do |options|
+          unless options.nil?
+            options[:deps] = [] unless options[:deps]
+            options[:exports] = name_of_processed_module unless options[:exports]
+          end
+        end
+      end
     end
   end
 end
