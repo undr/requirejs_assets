@@ -2,8 +2,6 @@ require 'tilt'
 
 module RequirejsAssets
   class Processor < Tilt::Template
-    attr_reader :pathname
-
     def prepare
       @data += "\n" if data != '' && data !~ /\n\Z/m
     end
@@ -58,15 +56,10 @@ module RequirejsAssets
     end
 
     def require_path path
-      #path = "./#{path}" unless relative?(path)
       context.require_asset(path)
     end
 
     private
-    def relative?(path)
-      path =~ /^\.($|\.?\/)/
-    end
-    
     def js_parser
       @js_parser ||= RKelly::Parser.new
     end
@@ -137,7 +130,6 @@ module RequirejsAssets
     end
 
     def module_path_for name
-      #context.resolve("#{Rails.application.config.requirejs.paths[name].presence || name}.js", content_type: :self)
       "#{Rails.application.config.requirejs.paths[name].presence || name}.js"
     end
 
