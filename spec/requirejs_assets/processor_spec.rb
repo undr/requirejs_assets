@@ -197,6 +197,32 @@ describe RequirejsAssets::Processor do
           processor.evaluate(context_instance, {}).should == result
         end
       end
+
+      context 'and config has deps and exports options' do
+        let(:fixture_prefix){'_deps_exports_options'}
+        before do
+          Rails.application.config.requirejs.shim = {
+            'shim_module' => {deps: ['dep1', 'dep2'], exports: 'module'}
+          }
+        end
+
+        specify do
+          processor.evaluate(context_instance, {}).should == result
+        end
+      end
+
+      context 'and config has array of deps' do
+        let(:fixture_prefix){'_array_of_deps'}
+        before do
+          Rails.application.config.requirejs.shim = {
+            'shim_module' => ['dep1', 'dep2']
+          }
+        end
+
+        specify do
+          processor.evaluate(context_instance, {}).should == result
+        end
+      end
     end
   end
 end

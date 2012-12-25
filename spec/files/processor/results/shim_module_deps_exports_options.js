@@ -20,7 +20,9 @@ var module = (function(object) {
   return object;
 }).call(object);
 var shim_module = module;
-define('shim_module', [], function() {
-
-})
+define('shim_module', ["dep1", "dep2"], (function(global) {
+  return function() {
+    return global.module;
+  };
+}(this)))
 

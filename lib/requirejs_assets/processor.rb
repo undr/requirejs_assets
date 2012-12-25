@@ -68,14 +68,15 @@ module RequirejsAssets
       @ast ||= js_parser.parse(data)
     end
 
-    def safety_wrapper_ast
-      @js_wrapper_ast ||= js_parser.parse('(function(){}).call(this);')
-    end
-
     def define_module_ast
-      @define_module_ast ||= js_parser.parse(
-        "define('#{name_of_processed_module}', #{shim_options[:deps].inspect}, #{shim_options[:exports]});"
-      )
+      @define_module_ast ||= begin
+        exports_fn = if shim_options[:exports].present?
+          "(function(global){return function(){return global.#{shim_options[:exports]};}}(this))"
+        else
+          "function(){}"
+        end
+        js_parser.parse("define('#{name_of_processed_module}', #{shim_options[:deps].inspect}, #{exports_fn});")
+      end
     end
 
     def finalize_javascript
@@ -88,24 +89,15 @@ module RequirejsAssets
 
     def finalize_shim_javascript
       ast.value << define_module_ast.value[0].value
-      safety_javascript(ast, true) + "\n\n"
+      finalize_amd_javascript
     end
 
     def finalize_amd_javascript
-      ast.to_ecma + "\n\n"
+      trailing_new_lines(ast.to_ecma)
     end
 
-    def safety_javascript source, return_string=nil
-      unless source.is_a?(RKelly::Nodes::SourceElementsNode)
-        return_string = true if return_string.nil?
-        source = js_parser.parse(source)
-      end
-
-      function_node = safety_wrapper_ast.find do |node|
-        node.is_a?(RKelly::Nodes::FunctionExprNode)
-      end
-      function_node.function_body.value = source
-      return_string ? safety_wrapper_ast.to_ecma : safety_wrapper_ast
+    def trailing_new_lines source
+      source + "\n\n"
     end
 
     def extract_directives node
@@ -156,12 +148,13 @@ module RequirejsAssets
 
     def shim_options
       @shim_options ||= begin
-        Rails.application.config.requirejs.shim.try(:[], name_of_processed_module).tap do |options|
-          unless options.nil?
-            options[:deps] = [] unless options[:deps]
-            options[:exports] = name_of_processed_module unless options[:exports]
-          end
+        options = Rails.application.config.requirejs.shim.try(:[], name_of_processed_module)
+        if options.is_a?(Array)
+          options = {deps: options}
+        elsif !options.nil?
+          options[:deps] = [] unless options[:deps]
         end
+        options
       end
     end
   end

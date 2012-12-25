@@ -1,26 +1,28 @@
-(function() {
-  var variable = "value";
-  var object = {
-    method: function(a, b) {
-      if(a) {
-        return function() {
-          return b;
-        };
-      } else {
+var variable = "value";
+var object = {
+  method: function(a, b) {
+    if(a) {
+      return function() {
         return b;
-      }
-    },
-    property: variable
+      };
+    } else {
+      return b;
+    }
+  },
+  property: variable
 };
-  var module = (function(object) {
-    object.submodule = {
-      method: function() {
+var module = (function(object) {
+  object.submodule = {
+    method: function() {
 
-      }
+    }
 };
-    return object;
-  }).call(object);
-  var shim_module = module;
-  define('shim_module', [], module)
-}).call(this);
+  return object;
+}).call(object);
+var shim_module = module;
+define('shim_module', [], (function(global) {
+  return function() {
+    return global.module;
+  };
+}(this)))
 
