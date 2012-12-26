@@ -1,4 +1,10 @@
-require 'rkelly'
+begin
+  require 'rkelly'
+rescue SyntaxError => e
+  # patch for ruby 1.9.3
+  require 'requirejs_assets/rkelly_patch'
+end
+
 require 'requirejs_assets/version'
 
 module RequirejsAssets
