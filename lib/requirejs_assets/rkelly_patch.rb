@@ -121,10 +121,10 @@ class RKelly::Visitors::EvaluationVisitor
   include RequirejsAssets::RKellyPatch
 end
 
-  %w{function pointcut real_sexp sexp}.each do |name|
-    require "rkelly/visitors/#{name}_visitor"
-  end
+%w{function pointcut real_sexp sexp}.each do |name|
+  require "rkelly/visitors/#{name}_visitor"
+end
 
-  require 'rkelly/parser'
-  require 'rkelly/runtime'
-  require 'rkelly/syntax_error'
+require 'rkelly/parser'
+require 'rkelly/runtime'
+require 'rkelly/syntax_error'
