@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe RequirejsAssets::Helper do
+describe RequirejsAssets::AssetsHelper do
   include RSpec::Rails::HelperExampleGroup
 
   describe '#requirejs_include_tag' do

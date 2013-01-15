@@ -1,5 +1,5 @@
 module RequirejsAssets
-  module Helper
+  module AssetsHelper
     include ActionView::Helpers::AssetTagHelper
     include ActionView::Helpers::JavaScriptHelper
 
