@@ -14,8 +14,8 @@ module RequirejsAssets
     end
 
     initializer 'requirejs.environment', after: 'sprockets.environment' do |app|
-      app.assets.unregister_processor('application/javascript', Sprockets::DirectiveProcessor)
       app.assets.register_postprocessor('application/javascript', RequirejsAssets::Processor)
+      app.assets.register_bundle_processor('application/javascript', RequirejsAssets::ModuleFinalizer)
     end
   end
 end

@@ -12,6 +12,7 @@ module RequirejsAssets
 
   autoload :Config, 'requirejs_assets/config'
   autoload :Processor, 'requirejs_assets/processor'
+  autoload :ModuleFinalizer, 'requirejs_assets/module_finalizer'
 end
 
 require 'requirejs_assets/engine' if defined?(Rails)
