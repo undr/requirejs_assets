@@ -24,5 +24,5 @@ define('shim_module', [], (function(global) {
   return function() {
     return global.module;
   };
-}(this)))
+}(this)));
 

@@ -75,7 +75,7 @@ module RequirejsAssets
         else
           "function(){}"
         end
-        js_parser.parse("define('#{name_of_processed_module}', #{shim_options[:deps].inspect}, #{exports_fn});")
+        js_parser.parse("define('#{name_of_processed_module}', #{shim_options[:deps].inspect}, #{exports_fn});\n")
       end
     end
 
@@ -97,6 +97,7 @@ module RequirejsAssets
     end
 
     def trailing_new_lines source
+      source += ';' if source.last != ';'
       source + "\n\n"
     end
 

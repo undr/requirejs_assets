@@ -22,5 +22,5 @@ var module = (function(object) {
 var shim_module = module;
 define('shim_module', [], function() {
 
-})
+});
 
