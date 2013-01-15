@@ -1,3 +1,6 @@
+.DS_Store
+/**/.DS_Store
+.rvmrc
 *.gem
 *.rbc
 .bundle
